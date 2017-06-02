@@ -3,7 +3,7 @@ Description=iptables firewall
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/bash -c 'sh /usr/lib/scfw.sh'
+ExecStart=/usr/bin/restartscfw
 
 [Install]
 WantedBy=multi-user.target
