@@ -35,17 +35,25 @@ export protect;
 #END OF HELPER FUNCTIONS
 #
 
+#
+#START OF DEFAULT POLICIES
+#
+#Drop incoming, drop routed, and allow outgoing
+iptables46 -P INPUT DROP
+iptables46 -P FORWARD DROP
+iptables46 -P OUTPUT ACCEPT
+#
+#END OF DEFAULT POLICIES
+#
+
 
 #
 #START OF PROTECTION RULES
 #Credit: https://javapipe.com/iptables46-ddos-protection
+#Readme: https://security.stackexchange.com/a/4745
 #
-#Drop routed, and allow outgoing
-iptables46 -P FORWARD DROP
-iptables46 -P OUTPUT ACCEPT
-
-#Drop invalid packets
-iptables46 -t mangle -A PREROUTING -m conntrack --ctstate INVALID -j DROP
+#Drop invalid packets, Broken?
+#iptables46 -t mangle -A PREROUTING -m conntrack --ctstate INVALID -j DROP
 
 #Drop TCP packets that are new and are not SYN
 iptables46 -t mangle -A PREROUTING -p tcp ! --syn -m conntrack --ctstate NEW -j DROP
@@ -110,12 +118,12 @@ source /etc/scfw_config.sh
 #
 #FINISHING TOUCHES
 #
-#Drop incomming
-iptables46 -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-iptables46 -A INPUT -i lo -j ACCEPT
-iptables46 -A OUTPUT -o lo -j ACCEPT
-iptables46 -P INPUT DROP
 #Drop SYNPROXY invalid
 iptables46 -A INPUT -m state --state INVALID -j DROP
+#Allow related
+iptables46 -A INPUT -i lo -j ACCEPT
+iptables46 -A OUTPUT -o lo -j ACCEPT
+iptables46 -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables46 -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 #More sysctls
 sysctl -w net/netfilter/nf_conntrack_tcp_loose=0

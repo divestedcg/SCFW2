@@ -1,5 +1,5 @@
 post_install() {
-  echo "Make sure to edit '/etc/scfw-config.sh' to your needs"
+  echo "Make sure to edit '/etc/scfw_config.sh' to your needs"
   echo "Enable by running 'sudo systemctl enable scfw --now'"
   echo "Use Netdata or 'watch -n1 cat /proc/net/stat/synproxy' to monitor SYNPROXY status"
 }
