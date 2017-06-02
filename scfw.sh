@@ -1,3 +1,6 @@
+#/bin/bash
+#Copyright (c) 2017 Spot Communications, Inc.
+
 #
 #START OF NECESSARY SYSCTLS
 #
