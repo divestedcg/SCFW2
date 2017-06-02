@@ -40,13 +40,9 @@ export protect;
 #START OF PROTECTION RULES
 #Credit: https://javapipe.com/iptables-ddos-protection
 #
-#Drop incomming, Drop routed, and allow outgoing
-iptables -P INPUT DROP
+#Drop routed, and allow outgoing
 iptables -P FORWARD DROP
 iptables -P OUTPUT ACCEPT
-iptables -A INPUT -i lo -j ACCEPT
-iptables -A OUTPUT -o lo -j ACCEPT
-iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 #Drop invalid packets
 iptables -t mangle -A PREROUTING -m conntrack --ctstate INVALID -j DROP
@@ -56,6 +52,7 @@ iptables -t mangle -A PREROUTING -p tcp ! --syn -m conntrack --ctstate NEW -j DR
 
 #Drop SYN packets with suspicious MSS value
 iptables -t mangle -A PREROUTING -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j DROP
+ip6tables -t mangle -A PREROUTING -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 1220:65535 -j DROP
 
 #Block packets with bogus TCP flags
 iptables -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j DROP
@@ -74,12 +71,12 @@ iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j DROP
 iptables -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j DROP
 
 #Block spoofed packets
-iptables -t mangle -A PREROUTING -s 224.0.0.0/3 -j DROP
-iptables -t mangle -A PREROUTING -s 169.254.0.0/16 -j DROP
+#iptables -t mangle -A PREROUTING -s 224.0.0.0/3 -j DROP
 #iptables -t mangle -A PREROUTING -s 172.16.0.0/12 -j DROP
-iptables -t mangle -A PREROUTING -s 192.0.2.0/24 -j DROP
 #iptables -t mangle -A PREROUTING -s 192.168.0.0/16 -j DROP
 #iptables -t mangle -A PREROUTING -s 10.0.0.0/8 -j DROP
+iptables -t mangle -A PREROUTING -s 169.254.0.0/16 -j DROP
+iptables -t mangle -A PREROUTING -s 192.0.2.0/24 -j DROP
 iptables -t mangle -A PREROUTING -s 0.0.0.0/8 -j DROP
 iptables -t mangle -A PREROUTING -s 240.0.0.0/5 -j DROP
 iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j DROP
@@ -113,5 +110,12 @@ source /etc/scfw_config.sh
 #
 #FINISHING TOUCHES
 #
+#Drop incomming
+iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A OUTPUT -o lo -j ACCEPT
+iptables -P INPUT DROP
+#Drop SYNPROXY invalid
 iptables -A INPUT -m state --state INVALID -j DROP
+#More sysctls
 sysctl -w net/netfilter/nf_conntrack_tcp_loose=0
