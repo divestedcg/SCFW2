@@ -82,13 +82,13 @@ iptables -t mangle -A PREROUTING -s 240.0.0.0/5 -j DROP
 iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j DROP
 
 #Drop ICMP
-iptables -t mangle -A PREROUTING -p icmp -j DROP
+#iptables -t mangle -A PREROUTING -p icmp -j DROP
 
 #Drop fragments in all chains
 iptables -t mangle -A PREROUTING -f -j DROP
 
 #Limit connections per source IP
-iptables -A INPUT -p tcp -m connlimit --connlimit-above 128 -j REJECT --reject-with tcp-reset
+iptables -A INPUT -p tcp -m connlimit --connlimit-above 32 -j REJECT --reject-with tcp-reset
 
 #Limit RST packets
 iptables -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j ACCEPT
