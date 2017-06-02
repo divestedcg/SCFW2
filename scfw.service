@@ -1,0 +1,9 @@
+[Unit]
+Description=iptables firewall
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c 'sh /usr/lib/scfw.sh'
+
+[Install]
+WantedBy=multi-user.target
