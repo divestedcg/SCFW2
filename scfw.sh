@@ -49,7 +49,7 @@ iptables46 -P OUTPUT ACCEPT
 
 #
 #START OF PROTECTION RULES
-#Credit: https://javapipe.com/iptables46-ddos-protection
+#Credit: https://javapipe.com/iptables46-ddos-protection #Deleted? Because of me? Don't know. Weird.
 #Readme: https://security.stackexchange.com/a/4745
 #
 #Drop invalid packets, Broken?
@@ -89,9 +89,6 @@ iptables -t mangle -A PREROUTING -s 0.0.0.0/8 -j DROP
 iptables -t mangle -A PREROUTING -s 240.0.0.0/5 -j DROP
 iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j DROP
 
-#Drop ICMP
-#iptables -t mangle -A PREROUTING -p icmp -j DROP
-
 #Drop fragments in all chains
 iptables -t mangle -A PREROUTING -f -j DROP
 
@@ -101,6 +98,11 @@ iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 32 -j REJECT --reject-
 #Limit RST packets
 iptables46 -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j ACCEPT
 iptables46 -A INPUT -p tcp --tcp-flags RST RST -j DROP
+
+#Prevent port-scanning
+iptables -N port-scanning
+iptables -A port-scanning -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 1/s --limit-burst 2 -j RETURN
+iptables -A port-scanning -j DROP
 #
 #END OF RULES
 #
@@ -115,12 +117,50 @@ source /etc/scfw_config.sh
 #
 
 
-#
-#FINISHING TOUCHES
-#
 #Drop SYNPROXY invalid
 iptables46 -A INPUT -m state --state INVALID -j DROP
-#Allow related
+
+
+#
+#Start of accepting ICMP
+#Credit: https://gist.github.com/jirutka/3742890
+#
+iptables46 -N ICMPFLOOD
+iptables46 -A ICMPFLOOD -m recent --set --name ICMP --rsource
+iptables46 -A ICMPFLOOD -m recent --update --seconds 1 --hitcount 6 --name ICMP --rsource --rttl -m limit --limit 1/sec --limit-burst 1 -j LOG --log-prefix "iptables[ICMP-flood]: "
+iptables46 -A ICMPFLOOD -m recent --update --seconds 1 --hitcount 6 --name ICMP --rsource --rttl -j DROP
+iptables46 -A ICMPFLOOD -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type 0  -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type 3  -m conntrack --ctstate NEW -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type 11 -m conntrack --ctstate NEW -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 1   -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 2   -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 3   -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 4   -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 133 -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 134 -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 135 -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 136 -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 137 -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 141 -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 142 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 130 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 131 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 132 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 143 -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 148 -j ACCEPT
+ip6tables -A INPUT              -p ipv6-icmp --icmpv6-type 149 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 151 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 152 -j ACCEPT
+ip6tables -A INPUT -s fe80::/10 -p ipv6-icmp --icmpv6-type 153 -j ACCEPT
+iptables -A INPUT -p icmp --icmp-type 8  -m conntrack --ctstate NEW -j ICMPFLOOD
+ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 128 -j ICMPFLOOD
+#
+#End of accepting ICMP
+#
+
+
+#Allow related packets
 iptables46 -A INPUT -i lo -j ACCEPT
 iptables46 -A OUTPUT -o lo -j ACCEPT
 iptables46 -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
