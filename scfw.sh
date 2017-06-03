@@ -107,12 +107,12 @@ iptables -t mangle -A PREROUTING -f -j LOGDROPBAD
 iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 64 ! -i lo -j LOGREJECTRATE
 
 #Limit connections per second
-iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 16/s --limit-burst 8 -j ACCEPT
-iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW -j LOGREJECTRATE
+iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 16/s --limit-burst 8 ! -i lo -j ACCEPT
+iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW ! -i lo -j LOGREJECTRATE
 
 #Limit RST packets
-iptables46 -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 16/s --limit-burst 8 -j ACCEPT
-iptables46 -A INPUT -p tcp --tcp-flags RST RST -j LOGDROPBAD
+iptables46 -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 16/s --limit-burst 8 ! -i lo -j ACCEPT
+iptables46 -A INPUT -p tcp --tcp-flags RST RST ! -i lo -j LOGDROPBAD
 
 #Prevent port-scanning
 iptables46 -N port-scanning
