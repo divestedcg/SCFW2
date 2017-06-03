@@ -37,11 +37,9 @@ export protect;
 
 
 #Logging
-iptables46 -N LOGDROP
 iptables46 -N LOGDROPBAD
 iptables46 -t mangle -N LOGDROPBAD
 iptables46 -N LOGDROPSCAN
-iptables46 -N LOGDROPSYN
 
 
 #
@@ -127,7 +125,7 @@ source /etc/scfw_config.sh
 
 
 #Drop SYNPROXY invalid
-iptables46 -A INPUT -m state --state INVALID -j LOGDROPSYN
+iptables46 -A INPUT -m state --state INVALID -j DROP
 
 
 #
@@ -137,7 +135,7 @@ iptables46 -A INPUT -m state --state INVALID -j LOGDROPSYN
 iptables46 -N ICMPFLOOD
 iptables46 -A ICMPFLOOD -m recent --set --name ICMP --rsource
 iptables46 -A ICMPFLOOD -m recent --update --seconds 1 --hitcount 6 --name ICMP --rsource --rttl -m limit --limit 1/sec --limit-burst 1 -j LOG --log-prefix "[SCFW DROP (ICMP)] "
-iptables46 -A ICMPFLOOD -m recent --update --seconds 1 --hitcount 6 --name ICMP --rsource --rttl -j LOGDROP
+iptables46 -A ICMPFLOOD -m recent --update --seconds 1 --hitcount 6 --name ICMP --rsource --rttl -j DROP
 iptables46 -A ICMPFLOOD -j ACCEPT
 iptables -A INPUT -p icmp --icmp-type 0  -m conntrack --ctstate NEW -j ACCEPT
 iptables -A INPUT -p icmp --icmp-type 3  -m conntrack --ctstate NEW -j ACCEPT
@@ -177,16 +175,12 @@ iptables46 -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
 
 #Logging
-iptables46 -A LOGDROP -m limit --limit 2/s -j LOG --log-prefix "[SCFW DROP] " --log-level 4
-iptables46 -A LOGDROP -j DROP
 iptables46 -A LOGDROPBAD -m limit --limit 1/s -j LOG --log-prefix "[SCFW DROP (BAD)] " --log-level 4
 iptables46 -A LOGDROPBAD -j DROP
 iptables46 -t mangle -A LOGDROPBAD -m limit --limit 1/s -j LOG --log-prefix "[SCFW DROP (BAD)] " --log-level 4
 iptables46 -t mangle -A LOGDROPBAD -j DROP
 iptables46 -A LOGDROPSCAN -m limit --limit 1/s -j LOG --log-prefix "[SCFW DROP (SCAN)] " --log-level 4
 iptables46 -A LOGDROPSCAN -j DROP
-iptables46 -A LOGDROPSYN -m limit --limit 10/m -j LOG --log-prefix "[SCFW DROP (SYN)] " --log-level 4
-iptables46 -A LOGDROPSYN -j DROP
 
 
 #More sysctls
