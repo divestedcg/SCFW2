@@ -1,6 +1,10 @@
 #/bin/bash
 #Copyright (c) 2017 Spot Communications, Inc.
 
+#Recommended reading
+#https://security.stackexchange.com/a/4745
+#https://www.digitalocean.com/community/tutorials/how-to-choose-an-effective-firewall-policy-to-secure-your-servers
+
 #
 #Start of necessary sysctls
 #
@@ -57,7 +61,6 @@ iptables46 -P OUTPUT ACCEPT
 #
 #Start of protection rules
 #Credit: https://javapipe.com/iptables46-ddos-protection #Deleted? Because of me? Don't know. Weird.
-#Readme: https://security.stackexchange.com/a/4745
 #
 #Drop invalid packets, Broken?
 #iptables46 -t mangle -A PREROUTING -m conntrack --ctstate INVALID -j LOGDROPBAD
@@ -92,7 +95,7 @@ iptables46 -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j
 #iptables -t mangle -A PREROUTING -s 10.0.0.0/8 -j LOGDROPBAD
 iptables -t mangle -A PREROUTING -s 169.254.0.0/16 -j LOGDROPBAD
 iptables -t mangle -A PREROUTING -s 192.0.2.0/24 -j LOGDROPBAD
-iptables -t mangle -A PREROUTING -s 0.0.0.0/8 -j LOGDROPBAD
+iptables -t mangle -A PREROUTING -s 0.0.0.0/8 -j DROP
 iptables -t mangle -A PREROUTING -s 240.0.0.0/5 -j LOGDROPBAD
 iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j LOGDROPBAD
 
@@ -100,10 +103,14 @@ iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j LOGDROPBAD
 iptables -t mangle -A PREROUTING -f -j LOGDROPBAD
 
 #Limit connections per source IP
-iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 32 ! -i lo -j REJECT --reject-with tcp-reset
+iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 64 ! -i lo -j REJECT --reject-with tcp-reset
+
+#Limit connections per second
+iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 16/s --limit-burst 8 -j ACCEPT
+iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW -j REJECT --reject-with tcp-reset
 
 #Limit RST packets
-iptables46 -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j ACCEPT
+iptables46 -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 16/s --limit-burst 8 -j ACCEPT
 iptables46 -A INPUT -p tcp --tcp-flags RST RST -j LOGDROPBAD
 
 #Prevent port-scanning
