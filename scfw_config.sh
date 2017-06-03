@@ -18,7 +18,7 @@
 #protect 22
 
 #Syncthing
-#protect 21027 && allowUDP 22000
+#protect 22000 && allowUDP 21027
 
 #Web
 #protect 80 && protect 443
