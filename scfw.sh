@@ -44,6 +44,7 @@ export protect;
 iptables46 -N LOGDROPBAD
 iptables46 -t mangle -N LOGDROPBAD
 iptables46 -N LOGDROPSCAN
+iptables46 -N LOGREJECTRATE
 
 
 #
@@ -103,11 +104,11 @@ iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j LOGDROPBAD
 iptables -t mangle -A PREROUTING -f -j LOGDROPBAD
 
 #Limit connections per source IP
-iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 64 ! -i lo -j REJECT --reject-with tcp-reset
+iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 64 ! -i lo -j LOGREJECTRATE
 
 #Limit connections per second
 iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 16/s --limit-burst 8 -j ACCEPT
-iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW -j REJECT --reject-with tcp-reset
+iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW -j LOGREJECTRATE
 
 #Limit RST packets
 iptables46 -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 16/s --limit-burst 8 -j ACCEPT
@@ -120,19 +121,6 @@ iptables46 -A port-scanning -j LOGDROPSCAN
 #
 #End of protection rules
 #
-
-
-#
-#Start of user configuration
-#
-source /etc/scfw_config.sh
-#
-#End of user configuration
-#
-
-
-#Drop SYNPROXY invalid
-iptables46 -A INPUT -m state --state INVALID -j DROP
 
 
 #
@@ -174,6 +162,19 @@ ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 128 -j ICMPFLOOD
 #
 
 
+#
+#Start of user configuration
+#
+source /etc/scfw_config.sh
+#
+#End of user configuration
+#
+
+
+#Drop SYNPROXY invalid
+iptables46 -A INPUT -m state --state INVALID -j DROP
+
+
 #Allow related packets
 iptables46 -A INPUT -i lo -j ACCEPT
 iptables46 -A OUTPUT -o lo -j ACCEPT
@@ -188,6 +189,8 @@ iptables46 -t mangle -A LOGDROPBAD -m limit --limit 1/s -j LOG --log-prefix "[SC
 iptables46 -t mangle -A LOGDROPBAD -j DROP
 iptables46 -A LOGDROPSCAN -m limit --limit 1/s -j LOG --log-prefix "[SCFW DROP (SCAN)] " --log-level 4
 iptables46 -A LOGDROPSCAN -j DROP
+iptables46 -A LOGREJECTRATE -m limit --limit 1/s -j LOG --log-prefix "[SCFW REJECT (RATELIMIT)] " --log-level 4
+iptables46 -A LOGREJECTRATE -p tcp -j REJECT --reject-with tcp-reset
 
 
 #More sysctls
