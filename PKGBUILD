@@ -1,7 +1,7 @@
 # Maintainer: Tad D <tad@spotco.us>
 pkgname=scfw
 pkgver=2.0
-pkgrel=4
+pkgrel=5
 pkgdesc="A better firewall"
 arch=('any')
 license=('custom')

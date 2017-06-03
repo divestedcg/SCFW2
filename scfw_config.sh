@@ -3,7 +3,7 @@
 #Use 'protect' to open a TCP port with SYNPROXY protection
 
 #Gogs
-#protect 2222 && protect 3000 && protect 8888
+#protect 2222 && protect 3000
 
 #Mumble
 #allowUDP 64738 && protect 64738
