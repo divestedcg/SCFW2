@@ -93,7 +93,7 @@ iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j DROP
 iptables -t mangle -A PREROUTING -f -j DROP
 
 #Limit connections per source IP
-iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 32 -j REJECT --reject-with tcp-reset
+iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 32 ! -i lo -j REJECT --reject-with tcp-reset
 
 #Limit RST packets
 iptables46 -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 2/s --limit-burst 2 -j ACCEPT
