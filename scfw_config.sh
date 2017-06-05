@@ -15,7 +15,8 @@
 #protect 19999
 
 #Prosody
-#protect 5000 && protect 5222 && protect 5269 && protect 5280 && protect 5281
+#protect 5222 && protect 5269 && protect 5280 && protect 5281
+#protect 5000 #mod_proxy65 support
 
 #SSH
 #protect 22
