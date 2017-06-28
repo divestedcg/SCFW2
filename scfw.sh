@@ -3,6 +3,8 @@
 
 #Recommended reading
 #https://security.stackexchange.com/a/4745
+#https://people.netfilter.org/hawk/presentations/devconf2014/iptables-ddos-mitigation_JesperBrouer.pdf
+#https://github.com/netoptimizer/network-testing/blob/master/iptables/iptables_synproxy.sh
 #https://www.digitalocean.com/community/tutorials/how-to-choose-an-effective-firewall-policy-to-secure-your-servers
 
 #
@@ -11,6 +13,8 @@
 sysctl -w net/ipv4/tcp_syncookies=1
 sysctl -w net/ipv4/tcp_timestamps=1
 sysctl -w net/netfilter/nf_conntrack_tcp_loose=0
+sysctl -w net/netfilter/nf_conntrack_max=500000
+sh -c 'echo 2000000 > /sys/module/nf_conntrack/parameters/hashsize'
 #
 #End of necessary sysctls
 #
@@ -32,7 +36,7 @@ export allowUDP;
 protect() {
 	allowTCP $1;
 	iptables46 -t raw -I PREROUTING -p tcp -m tcp --syn -j CT --notrack --dport $1;
-	iptables46 -I INPUT -p tcp -m tcp -m state --state INVALID,UNTRACKED -j SYNPROXY --sack-perm --timestamp --wscale 7 --mss 1460 --dport $1;
+	iptables46 -A INPUT -p tcp -m tcp -m state --state INVALID,UNTRACKED -j SYNPROXY --sack-perm --timestamp --wscale 7 --mss 1460 --dport $1;
 }
 export protect;
 #
@@ -61,10 +65,12 @@ iptables46 -P OUTPUT ACCEPT
 
 #
 #Start of protection rules
-#Credit: https://javapipe.com/iptables46-ddos-protection #Deleted? Because of me? Don't know. Weird.
+#Credit: https://javapipe.com/iptables46-ddos-protection
 #
-#Drop invalid packets, Broken?
-#iptables46 -t mangle -A PREROUTING -m conntrack --ctstate INVALID -j LOGDROPBAD
+#Drop invalid packets
+iptables46 -A INPUT -m conntrack --ctstate INVALID -j DROP
+iptables46 -A OUTPUT -m conntrack --ctstate INVALID -j DROP
+iptables46 -A FORWARD -m conntrack --ctstate INVALID -j DROP
 
 #Drop TCP packets that are new and are not SYN
 iptables46 -t mangle -A PREROUTING -p tcp ! --syn -m conntrack --ctstate NEW -j LOGDROPBAD
@@ -91,17 +97,16 @@ iptables46 -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j
 
 #Block spoofed packets
 #iptables -t mangle -A PREROUTING -s 224.0.0.0/3 -j LOGDROPBAD
-#iptables -t mangle -A PREROUTING -s 172.16.0.0/12 -j LOGDROPBAD
 #iptables -t mangle -A PREROUTING -s 192.168.0.0/16 -j LOGDROPBAD
 #iptables -t mangle -A PREROUTING -s 10.0.0.0/8 -j LOGDROPBAD
-iptables -t mangle -A PREROUTING -s 169.254.0.0/16 -j LOGDROPBAD
-iptables -t mangle -A PREROUTING -s 192.0.2.0/24 -j LOGDROPBAD
 iptables -t mangle -A PREROUTING -s 0.0.0.0/8 -j DROP
-iptables -t mangle -A PREROUTING -s 240.0.0.0/5 -j LOGDROPBAD
 iptables -t mangle -A PREROUTING -s 127.0.0.0/8 ! -i lo -j LOGDROPBAD
+iptables -t mangle -A PREROUTING -s 172.16.0.0/12 -j LOGDROPBAD
+iptables -t mangle -A PREROUTING -s 192.0.2.0/24 -j LOGDROPBAD
+iptables -t mangle -A PREROUTING -s 240.0.0.0/5 -j LOGDROPBAD
 
 #Drop fragments in all chains
-iptables -t mangle -A PREROUTING -f -j LOGDROPBAD
+iptables -t mangle -A PREROUTING -f -j DROP
 
 #Limit connections per source IP
 iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 64 ! -i lo -j LOGREJECTRATE
@@ -171,7 +176,7 @@ source /etc/scfw_config.sh
 #
 
 
-#Drop SYNPROXY invalid
+#Drop SYNPROXY invalid (SYN-ACK protection)
 iptables46 -A INPUT -m state --state INVALID -j DROP
 
 
