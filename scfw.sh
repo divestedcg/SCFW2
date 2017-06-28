@@ -1,8 +1,11 @@
 #/bin/bash
 #Copyright (c) 2017 Spot Communications, Inc.
 
+#TODO: Benchmark SYNPROXY vs 4.4+'s lockless TCP listener
+
 #Recommended reading
 #https://security.stackexchange.com/a/4745
+#http://rhelblog.redhat.com/2014/04/11/mitigate-tcp-syn-flood-attacks-with-red-hat-enterprise-linux-7-beta/
 #https://people.netfilter.org/hawk/presentations/devconf2014/iptables-ddos-mitigation_JesperBrouer.pdf
 #https://www.digitalocean.com/community/tutorials/how-to-choose-an-effective-firewall-policy-to-secure-your-servers
 
@@ -103,7 +106,7 @@ iptables46 -P OUTPUT ACCEPT
 #Start of protection rules
 #Credit: https://javapipe.com/iptables46-ddos-protection
 #
-#Drop invalid packets !!!FIXME!!!
+#Drop invalid packets XXX: Not compatible with SYNPROXY
 #iptables46 -A INPUT -m conntrack --ctstate INVALID -j DROP
 #iptables46 -A OUTPUT -m conntrack --ctstate INVALID -j DROP
 #iptables46 -A FORWARD -m conntrack --ctstate INVALID -j DROP
