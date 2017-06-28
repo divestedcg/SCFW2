@@ -29,7 +29,6 @@ sysctl -wq net.ipv4.conf.default.secure_redirects=0
 sysctl -wq net.ipv4.conf.default.send_redirects=0
 sysctl -wq net.ipv4.icmp_echo_ignore_all=0
 sysctl -wq net.ipv4.icmp_echo_ignore_broadcasts=1
-sysctl -wq net.ipv4.icmp_echo_ignore_broadcasts=1 
 sysctl -wq net.ipv4.icmp_errors_use_inbound_ifaddr=0
 sysctl -wq net.ipv4.icmp_ignore_bogus_error_responses=1
 sysctl -wq net.ipv4.ip_forward=0
@@ -39,6 +38,7 @@ sysctl -wq net.ipv4.tcp_timestamps=1
 sysctl -wq net.ipv6.conf.all.accept_ra_defrtr=0
 sysctl -wq net.ipv6.conf.all.accept_ra_pinfo=0
 sysctl -wq net.ipv6.conf.all.accept_ra_rtr_pref=0
+sysctl -wq net.ipv6.conf.all.accept_redirects=0
 sysctl -wq net.ipv6.conf.all.autoconf=0
 sysctl -wq net.ipv6.conf.all.dad_transmits=0
 sysctl -wq net.ipv6.conf.all.max_addresses=1
@@ -47,6 +47,7 @@ sysctl -wq net.ipv6.conf.all.use_tempaddr=2
 sysctl -wq net.ipv6.conf.default.accept_ra_defrtr=0
 sysctl -wq net.ipv6.conf.default.accept_ra_pinfo=0
 sysctl -wq net.ipv6.conf.default.accept_ra_rtr_pref=0
+sysctl -wq net.ipv6.conf.default.accept_redirects=0
 sysctl -wq net.ipv6.conf.default.autoconf=0
 sysctl -wq net.ipv6.conf.default.dad_transmits=0
 sysctl -wq net.ipv6.conf.default.max_addresses=1
@@ -118,7 +119,7 @@ iptables46 -t mangle -A PREROUTING -p tcp ! --syn -m conntrack --ctstate NEW -j 
 iptables -t mangle -A PREROUTING -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 536:65535 -j LOGDROPBAD
 ip6tables -t mangle -A PREROUTING -p tcp -m conntrack --ctstate NEW -m tcpmss ! --mss 1220:65535 -j LOGDROPBAD
 
-#Block packets with bogus TCP flags
+#Drop packets with bogus TCP flags
 iptables46 -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN,RST,PSH,ACK,URG NONE -j LOGDROPBAD
 iptables46 -t mangle -A PREROUTING -p tcp --tcp-flags FIN,SYN FIN,SYN -j LOGDROPBAD
 iptables46 -t mangle -A PREROUTING -p tcp --tcp-flags SYN,RST SYN,RST -j LOGDROPBAD
@@ -134,7 +135,7 @@ iptables46 -t mangle -A PREROUTING -p tcp --tcp-flags ALL FIN,PSH,URG -j LOGDROP
 iptables46 -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,FIN,PSH,URG -j LOGDROPBAD
 iptables46 -t mangle -A PREROUTING -p tcp --tcp-flags ALL SYN,RST,ACK,FIN,URG -j LOGDROPBAD
 
-#Block spoofed packets
+#Drop spoofed packets
 #iptables -t mangle -A PREROUTING -s 224.0.0.0/3 -j LOGDROPBAD
 #iptables -t mangle -A PREROUTING -s 192.168.0.0/16 -j LOGDROPBAD
 #iptables -t mangle -A PREROUTING -s 10.0.0.0/8 -j LOGDROPBAD
@@ -144,7 +145,7 @@ iptables -t mangle -A PREROUTING -s 172.16.0.0/12 -j LOGDROPBAD
 iptables -t mangle -A PREROUTING -s 192.0.2.0/24 -j LOGDROPBAD
 iptables -t mangle -A PREROUTING -s 240.0.0.0/5 -j LOGDROPBAD
 
-#Drop fragments in all chains
+#Drop fragments
 iptables -t mangle -A PREROUTING -f -j DROP
 
 #Limit connections per source IP
