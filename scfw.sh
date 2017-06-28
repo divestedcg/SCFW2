@@ -4,19 +4,56 @@
 #Recommended reading
 #https://security.stackexchange.com/a/4745
 #https://people.netfilter.org/hawk/presentations/devconf2014/iptables-ddos-mitigation_JesperBrouer.pdf
-#https://github.com/netoptimizer/network-testing/blob/master/iptables/iptables_synproxy.sh
 #https://www.digitalocean.com/community/tutorials/how-to-choose-an-effective-firewall-policy-to-secure-your-servers
 
 #
-#Start of necessary sysctls
+#Start of sysctl hardening
+#Credit: https://serverfault.com/a/811826
+#Credit: https://linux-audit.com/linux-security-guide-for-hardening-ipv6/
+#Credit: https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/
 #
-sysctl -w net/ipv4/tcp_syncookies=1
-sysctl -w net/ipv4/tcp_timestamps=1
-sysctl -w net/netfilter/nf_conntrack_tcp_loose=0
-sysctl -w net/netfilter/nf_conntrack_max=500000
+sysctl -wq net.ipv4.conf.all.accept_redirects=0
+sysctl -wq net.ipv4.conf.all.accept_source_route=0
+sysctl -wq net.ipv4.conf.all.log_martians=1
+sysctl -wq net.ipv4.conf.all.rp_filter=1
+sysctl -wq net.ipv4.conf.all.secure_redirects=0
+sysctl -wq net.ipv4.conf.all.send_redirects=0
+sysctl -wq net.ipv4.conf.default.accept_redirects=0
+sysctl -wq net.ipv4.conf.default.accept_source_route=0
+sysctl -wq net.ipv4.conf.default.log_martians=1
+sysctl -wq net.ipv4.conf.default.rp_filter=1
+sysctl -wq net.ipv4.conf.default.secure_redirects=0
+sysctl -wq net.ipv4.conf.default.send_redirects=0
+sysctl -wq net.ipv4.icmp_echo_ignore_all=0
+sysctl -wq net.ipv4.icmp_echo_ignore_broadcasts=1
+sysctl -wq net.ipv4.icmp_echo_ignore_broadcasts=1 
+sysctl -wq net.ipv4.icmp_errors_use_inbound_ifaddr=0
+sysctl -wq net.ipv4.icmp_ignore_bogus_error_responses=1
+sysctl -wq net.ipv4.ip_forward=0
+sysctl -wq net.ipv4.tcp_rfc1337=1
+sysctl -wq net.ipv4.tcp_syncookies=1
+sysctl -wq net.ipv4.tcp_timestamps=1
+sysctl -wq net.ipv6.conf.all.accept_ra_defrtr=0
+sysctl -wq net.ipv6.conf.all.accept_ra_pinfo=0
+sysctl -wq net.ipv6.conf.all.accept_ra_rtr_pref=0
+sysctl -wq net.ipv6.conf.all.autoconf=0
+sysctl -wq net.ipv6.conf.all.dad_transmits=0
+sysctl -wq net.ipv6.conf.all.max_addresses=1
+sysctl -wq net.ipv6.conf.all.router_solicitations=0
+sysctl -wq net.ipv6.conf.all.use_tempaddr=2
+sysctl -wq net.ipv6.conf.default.accept_ra_defrtr=0
+sysctl -wq net.ipv6.conf.default.accept_ra_pinfo=0
+sysctl -wq net.ipv6.conf.default.accept_ra_rtr_pref=0
+sysctl -wq net.ipv6.conf.default.autoconf=0
+sysctl -wq net.ipv6.conf.default.dad_transmits=0
+sysctl -wq net.ipv6.conf.default.max_addresses=1
+sysctl -wq net.ipv6.conf.default.router_solicitations=0
+sysctl -wq net.ipv6.conf.default.use_tempaddr=2
+sysctl -wq net.netfilter.nf_conntrack_max=500000
+sysctl -wq net.netfilter.nf_conntrack_tcp_loose=0
 sh -c 'echo 2000000 > /sys/module/nf_conntrack/parameters/hashsize'
 #
-#End of necessary sysctls
+#End of sysctl hardening
 #
 
 
@@ -33,7 +70,7 @@ allowUDP() {
 }
 export allowUDP;
 
-protect() {
+protect() { #Credit: https://github.com/netoptimizer/network-testing/blob/master/iptables/iptables_synproxy.sh
 	allowTCP $1;
 	iptables46 -t raw -I PREROUTING -p tcp -m tcp --syn -j CT --notrack --dport $1;
 	iptables46 -A INPUT -p tcp -m tcp -m state --state INVALID,UNTRACKED -j SYNPROXY --sack-perm --timestamp --wscale 7 --mss 1460 --dport $1;
@@ -47,7 +84,6 @@ export protect;
 #Logging
 iptables46 -N LOGDROPBAD
 iptables46 -t mangle -N LOGDROPBAD
-iptables46 -N LOGDROPSCAN
 iptables46 -N LOGREJECTRATE
 
 
@@ -67,10 +103,10 @@ iptables46 -P OUTPUT ACCEPT
 #Start of protection rules
 #Credit: https://javapipe.com/iptables46-ddos-protection
 #
-#Drop invalid packets
-iptables46 -A INPUT -m conntrack --ctstate INVALID -j DROP
-iptables46 -A OUTPUT -m conntrack --ctstate INVALID -j DROP
-iptables46 -A FORWARD -m conntrack --ctstate INVALID -j DROP
+#Drop invalid packets !!!FIXME!!!
+#iptables46 -A INPUT -m conntrack --ctstate INVALID -j DROP
+#iptables46 -A OUTPUT -m conntrack --ctstate INVALID -j DROP
+#iptables46 -A FORWARD -m conntrack --ctstate INVALID -j DROP
 
 #Drop TCP packets that are new and are not SYN
 iptables46 -t mangle -A PREROUTING -p tcp ! --syn -m conntrack --ctstate NEW -j LOGDROPBAD
@@ -110,19 +146,6 @@ iptables -t mangle -A PREROUTING -f -j DROP
 
 #Limit connections per source IP
 iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 64 ! -i lo -j LOGREJECTRATE
-
-#Limit connections per second
-iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW -m limit --limit 16/s --limit-burst 8 ! -i lo -j ACCEPT
-iptables46 -A INPUT -p tcp -m conntrack --ctstate NEW ! -i lo -j LOGREJECTRATE
-
-#Limit RST packets
-iptables46 -A INPUT -p tcp --tcp-flags RST RST -m limit --limit 16/s --limit-burst 8 ! -i lo -j ACCEPT
-iptables46 -A INPUT -p tcp --tcp-flags RST RST ! -i lo -j LOGDROPBAD
-
-#Prevent port-scanning
-iptables46 -N port-scanning
-iptables46 -A port-scanning -p tcp --tcp-flags SYN,ACK,FIN,RST RST -m limit --limit 1/s --limit-burst 2 -j RETURN
-iptables46 -A port-scanning -j LOGDROPSCAN
 #
 #End of protection rules
 #
@@ -192,11 +215,9 @@ iptables46 -A LOGDROPBAD -m limit --limit 1/s -j LOG --log-prefix "[SCFW DROP (B
 iptables46 -A LOGDROPBAD -j DROP
 iptables46 -t mangle -A LOGDROPBAD -m limit --limit 1/s -j LOG --log-prefix "[SCFW DROP (BAD)] " --log-level 4
 iptables46 -t mangle -A LOGDROPBAD -j DROP
-iptables46 -A LOGDROPSCAN -m limit --limit 1/s -j LOG --log-prefix "[SCFW DROP (SCAN)] " --log-level 4
-iptables46 -A LOGDROPSCAN -j DROP
 iptables46 -A LOGREJECTRATE -m limit --limit 1/s -j LOG --log-prefix "[SCFW REJECT (RATELIMIT)] " --log-level 4
 iptables46 -A LOGREJECTRATE -p tcp -j REJECT --reject-with tcp-reset
 
 
 #More sysctls
-sysctl -w net/netfilter/nf_conntrack_tcp_loose=0
+sysctl -wq net.netfilter.nf_conntrack_tcp_loose=0
