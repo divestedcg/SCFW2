@@ -1,19 +1,11 @@
 #!/bin/bash
 #Copyright (c) 2017 Spot Communications, Inc.
-iptables -F
-iptables -t mangle -F
-iptables -t mangle -X
-iptables -t raw -F
-iptables -t raw -X
-iptables -P INPUT ACCEPT
-iptables -P FORWARD ACCEPT
-iptables -P OUTPUT ACCEPT
-ip6tables -F
-ip6tables -t mangle -F
-ip6tables -t mangle -X
-ip6tables -t raw -F
-ip6tables -t raw -X
-ip6tables -P INPUT ACCEPT
-ip6tables -P FORWARD ACCEPT
-ip6tables -P OUTPUT ACCEPT
+ip46tables -F
+ip46tables -t mangle -F
+ip46tables -t mangle -X
+ip46tables -t raw -F
+ip46tables -t raw -X
+ip46tables -P INPUT ACCEPT
+ip46tables -P FORWARD ACCEPT
+ip46tables -P OUTPUT ACCEPT
 bash -c 'sh /usr/lib/scfw.sh'

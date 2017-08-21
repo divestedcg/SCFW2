@@ -1,13 +1,13 @@
 # Maintainer: Tad D <tad@spotco.us>
 pkgname=scfw
 pkgver=2.0
-pkgrel=33
+pkgrel=34
 pkgdesc="A better firewall"
 arch=('any')
 license=('custom')
 depends=('iptables')
 source=('scfw.sh' 'scfw_config.sh' 'scfw.service' 'restartscfw' 'iptables46')
-md5sums=('SKIP' 'SKIP' '6238a17c6646d50277a949fb6f71ac99' '8742e9debbca0edec4475b317f000f05' '52d0ef037469f05af57ae41946c53840')
+md5sums=('SKIP' 'SKIP' '6238a17c6646d50277a949fb6f71ac99' '4db020a3a694d8b09b9d423e410b8a3b' '52d0ef037469f05af57ae41946c53840')
 install=scfw.install
 backup=('etc/scfw_config.sh')
 

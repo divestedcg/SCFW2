@@ -2,7 +2,7 @@
 #Use 'alllowUDP' to open a UDP port without SYNPROXY protection
 #Use 'protect' to open a TCP port with SYNPROXY protection
 
-#Gogs
+#Gitea/Gogs
 #protect 2222 && protect 3000
 
 #Kodi
@@ -15,8 +15,8 @@
 #protect 19999
 
 #Prosody
-#protect 5222 && protect 5269 && protect 5280 && protect 5281
-#protect 5000 #mod_proxy65 support
+#protect 5222 && protect 5269 && protect 5281 #C2S, S2S, HTTPS
+#protect 5000 #mod_proxy65
 
 #SSH
 #protect 22
