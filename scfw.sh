@@ -15,43 +15,18 @@
 #Credit: https://linux-audit.com/linux-security-guide-for-hardening-ipv6/
 #Credit: https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/
 #
-sysctl -wq net.ipv4.conf.all.accept_redirects=0
-sysctl -wq net.ipv4.conf.all.accept_source_route=0
 sysctl -wq net.ipv4.conf.all.log_martians=1
 sysctl -wq net.ipv4.conf.all.rp_filter=1
-sysctl -wq net.ipv4.conf.all.secure_redirects=0
-sysctl -wq net.ipv4.conf.all.send_redirects=0
-sysctl -wq net.ipv4.conf.default.accept_redirects=0
-sysctl -wq net.ipv4.conf.default.accept_source_route=0
 sysctl -wq net.ipv4.conf.default.log_martians=1
 sysctl -wq net.ipv4.conf.default.rp_filter=1
-sysctl -wq net.ipv4.conf.default.secure_redirects=0
-sysctl -wq net.ipv4.conf.default.send_redirects=0
 sysctl -wq net.ipv4.icmp_echo_ignore_all=0
 sysctl -wq net.ipv4.icmp_echo_ignore_broadcasts=1
 sysctl -wq net.ipv4.icmp_errors_use_inbound_ifaddr=0
 sysctl -wq net.ipv4.icmp_ignore_bogus_error_responses=1
-sysctl -wq net.ipv4.ip_forward=0
 sysctl -wq net.ipv4.tcp_rfc1337=1
 sysctl -wq net.ipv4.tcp_syncookies=1
 sysctl -wq net.ipv4.tcp_timestamps=1
-sysctl -wq net.ipv6.conf.all.accept_ra_defrtr=0
-sysctl -wq net.ipv6.conf.all.accept_ra_pinfo=0
-sysctl -wq net.ipv6.conf.all.accept_ra_rtr_pref=0
-sysctl -wq net.ipv6.conf.all.accept_redirects=0
-sysctl -wq net.ipv6.conf.all.autoconf=0
-sysctl -wq net.ipv6.conf.all.dad_transmits=0
-sysctl -wq net.ipv6.conf.all.max_addresses=1
-sysctl -wq net.ipv6.conf.all.router_solicitations=0
 sysctl -wq net.ipv6.conf.all.use_tempaddr=2
-sysctl -wq net.ipv6.conf.default.accept_ra_defrtr=0
-sysctl -wq net.ipv6.conf.default.accept_ra_pinfo=0
-sysctl -wq net.ipv6.conf.default.accept_ra_rtr_pref=0
-sysctl -wq net.ipv6.conf.default.accept_redirects=0
-sysctl -wq net.ipv6.conf.default.autoconf=0
-sysctl -wq net.ipv6.conf.default.dad_transmits=0
-sysctl -wq net.ipv6.conf.default.max_addresses=1
-sysctl -wq net.ipv6.conf.default.router_solicitations=0
 sysctl -wq net.ipv6.conf.default.use_tempaddr=2
 sysctl -wq net.netfilter.nf_conntrack_max=500000
 sysctl -wq net.netfilter.nf_conntrack_tcp_loose=0
