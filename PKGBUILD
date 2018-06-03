@@ -1,4 +1,4 @@
-# Maintainer: Tad D <tad@spotco.us>
+# Maintainer: Tad <tad@spotco.us>
 pkgname=scfw
 pkgver=2.0
 pkgrel=37

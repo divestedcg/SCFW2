@@ -1,5 +1,5 @@
 #/bin/bash
-#Copyright (c) 2017 Spot Communications, Inc.
+#Copyright (c) 2017 Divested Computing, Inc.
 
 #TODO: Benchmark SYNPROXY vs 4.4+'s lockless TCP listener
 
