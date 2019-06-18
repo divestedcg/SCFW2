@@ -1,5 +1,5 @@
 #/bin/bash
-#Copyright (c) 2017 Divested Computing, Inc.
+#Copyright (c) 2017 Divested Computing Group
 
 install -Dm700 iptables46 /usr/bin/iptables46
 install -Dm700 restartscfw /usr/bin/restartscfw
