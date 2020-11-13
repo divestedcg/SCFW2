@@ -1,5 +1,7 @@
 #!/bin/bash
 #Copyright (c) 2017 Divested Computing Team
+#License: GPLv3
+
 iptables46 -F
 iptables46 -t mangle -F
 iptables46 -t mangle -X

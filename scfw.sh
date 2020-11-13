@@ -1,5 +1,6 @@
 #/bin/bash
 #Copyright (c) 2017 Divested Computing Group
+#License: GPLv3
 
 #TODO: Benchmark SYNPROXY vs 4.4+'s lockless TCP listener
 
