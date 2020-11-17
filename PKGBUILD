@@ -12,11 +12,11 @@ optdepends=('arch-audit: check for insecure packages'
 	'firejail: sandbox programs'
 	'linux-hardened: harden against exploits')
 source=('scfw.sh' 'scfw_config.sh' 'scfw.service' 'restartscfw' 'iptables46')
-sha512sums=('1ed389db95e8a4753f2f35d194bc75e2f95b17842ff57614286eb0bc8fa0d7bdc2caaf665fc800440c44275a2eb7688ccb041cbab010f0950a812db44973c20d'
+sha512sums=('6633dc54d87b8d16f1bba36073da77a53764248540b225e4b9bf1f67ee39abb60a2bcaeb3bb6e814848262b373ecfc978713459681b517b7cb4914417d69f12c'
             '84e46cd8f7249818a55dcd21a35d0260e884e3cbd9fe85e102e6d897fba21eaea26df6c7dcf7790b17832a8a110aafd6f7e4d558c74ffe5b3d5a05f3d41425fe'
             'c16c88d9d47edcb03bc1ba87b59867131f703f9d4f92c9ac91e1788bf2ad531891a3fc275cd1030bf22806161106fe67fec15087b258dc7f2779ad89b068376c'
-            '7ffbdf3c0905a5a001cfa18a22f982065a606ac800d33aec68bb8969f9613ad8a9eb6d1e288e1f5c9d4e933b174324370be2805868a5ec7394c180c534ed54df'
-            '0b3e739f125aeb62aad55f536155ae17440c2542f7f8a3a1afaf2b298e30211db9acb65ab58f45fe235a12e07ad1b74e5b9f6f03a96e7c987384dfe7d3e16c6e')
+            '1002d65b71e4b34e61716d7cdd0b776bf55d9ad5d6d154cf437faf3681c642e4ff65c71d3bd4d5545b0e76a0e19aa8ae211e61b86e5c7bd0fee0125130c891de'
+            'c460f0e20e05cb26a26254bc4c85f2b0b2c21c223ae49cd6ce60abbdeaeb337402c1c984d0c7e81878181e08cbb1ba3e9905cb87e1ae34006c1ed7a839a664fb')
 install=scfw.install
 backup=('etc/scfw_config.sh')
 
