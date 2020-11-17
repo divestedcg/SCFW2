@@ -1,5 +1,5 @@
 #!/bin/bash
-#Copyright (c) 2017 Divested Computing Team
+#Copyright (c) 2017 Divested Computing Group
 #License: GPLv3
 
 iptables46 -F

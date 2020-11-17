@@ -4,14 +4,13 @@ pkgver=2.0
 pkgrel=37
 pkgdesc="A better firewall"
 arch=('any')
-license=('custom')
+license=('GPL3')
 depends=('iptables')
 optdepends=('arch-audit: check for insecure packages'
 	'brace: hardened configs'
 	'extirpater: erase drive freespace'
 	'firejail: sandbox programs'
-	'linux-hardened: harden against exploits'
-	'rkhunter: scan for rootkits')
+	'linux-hardened: harden against exploits')
 source=('scfw.sh' 'scfw_config.sh' 'scfw.service' 'restartscfw' 'iptables46')
 sha512sums=('1ed389db95e8a4753f2f35d194bc75e2f95b17842ff57614286eb0bc8fa0d7bdc2caaf665fc800440c44275a2eb7688ccb041cbab010f0950a812db44973c20d'
             '84e46cd8f7249818a55dcd21a35d0260e884e3cbd9fe85e102e6d897fba21eaea26df6c7dcf7790b17832a8a110aafd6f7e4d558c74ffe5b3d5a05f3d41425fe'
