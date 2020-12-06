@@ -1,0 +1,9 @@
+A simpler alternative to UFW and the likes.
+
+There is a good chance it is broken.
+
+Oh don't let any users edit the config, it'll be executed as is as root.
+
+Also SYNPROXY might be useless after the 4.4 lockless TCP overhaul?
+
+Just go use firewalld or something else.
