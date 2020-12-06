@@ -83,7 +83,7 @@ iptables46 -P OUTPUT ACCEPT
 #Start of protection rules
 #Credit: https://javapipe.com/iptables46-ddos-protection
 #
-#Drop invalid packets XXX: Not compatible with SYNPROXY
+#Drop invalid packets XXX: Not compatible with SYNPROXY (?)
 #iptables46 -A INPUT -m conntrack --ctstate INVALID -j DROP
 #iptables46 -A OUTPUT -m conntrack --ctstate INVALID -j DROP
 #iptables46 -A FORWARD -m conntrack --ctstate INVALID -j DROP
@@ -133,7 +133,7 @@ iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 64 ! -i lo -j LOGREJEC
 
 #
 #Start of accepting ICMP
-#Credit: https://gist.github.com/jirutka/3742890
+#Credit: https://gist.github.com/jirutka/3742890 (MIT)
 #
 iptables46 -N ICMPFLOOD
 iptables46 -A ICMPFLOOD -m recent --set --name ICMP --rsource
