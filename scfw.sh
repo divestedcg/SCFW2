@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #Copyright (c) 2017 Divested Computing Group
 #License: GPLv3
 
