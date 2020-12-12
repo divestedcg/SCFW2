@@ -1,17 +1,17 @@
 # Maintainer: Tad <tad@spotco.us>
 pkgname=scfw
 pkgver=2.0
-pkgrel=38
+pkgrel=39
 pkgdesc="A better firewall?"
 arch=('any')
 license=('GPL3')
 depends=('iptables')
 source=('scfw.sh' 'scfw_config.sh' 'scfw.service' 'restartscfw' 'iptables46')
-sha512sums=('68214a633ac9477c9cb0c7679c82d7b1af1d57894f6e9a2ec476e7971541c65c5375a0d8e9db0b7a7b9ae044668808ddb2fd4b94437079d2fc9d0a7d9181d969'
+sha512sums=('cf8c3a84fe3069d57f7e3b23d580e4476d0b24d3bc99f4a55d08e255c085d4b6fd10fc25afb09105a6507157f1b37914d60bef3eb82f024c111c8633f7d47caf'
             '84e46cd8f7249818a55dcd21a35d0260e884e3cbd9fe85e102e6d897fba21eaea26df6c7dcf7790b17832a8a110aafd6f7e4d558c74ffe5b3d5a05f3d41425fe'
             'c16c88d9d47edcb03bc1ba87b59867131f703f9d4f92c9ac91e1788bf2ad531891a3fc275cd1030bf22806161106fe67fec15087b258dc7f2779ad89b068376c'
-            '1002d65b71e4b34e61716d7cdd0b776bf55d9ad5d6d154cf437faf3681c642e4ff65c71d3bd4d5545b0e76a0e19aa8ae211e61b86e5c7bd0fee0125130c891de'
-            'c460f0e20e05cb26a26254bc4c85f2b0b2c21c223ae49cd6ce60abbdeaeb337402c1c984d0c7e81878181e08cbb1ba3e9905cb87e1ae34006c1ed7a839a664fb')
+            '49d95adcfb5f1973eb689573518fd09a37a3cb24b8ca7fcc7920b5ed509f311749770e7ca3a78a106705e2aa3233e5b5552b46189744e5b60d523b1332a32157'
+            '953db04a270f2697ee0db3b62946aa215973a65d5f168ec2b977c65c44ff7d229eadf6042c9de8f195ebdfbffffcc916764a132cbcbad6d2052353a1d09ee876')
 install=scfw.install
 backup=('etc/scfw_config.sh')
 

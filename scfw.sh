@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #Copyright (c) 2017 Divested Computing Group
 #License: GPLv3
 
@@ -173,7 +173,7 @@ ip6tables -A INPUT -p ipv6-icmp --icmpv6-type 128 -j ICMPFLOOD
 #
 #Start of user configuration
 #
-source /etc/scfw_config.sh
+. /etc/scfw_config.sh
 #
 #End of user configuration
 #
