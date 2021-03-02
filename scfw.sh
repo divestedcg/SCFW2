@@ -5,14 +5,14 @@
 #TODO: Benchmark SYNPROXY vs 4.4+'s lockless TCP listener
 
 #Recommended reading
-#https://security.stackexchange.com/a/4745
-#http://rhelblog.redhat.com/2014/04/11/mitigate-tcp-syn-flood-attacks-with-red-hat-enterprise-linux-7-beta/
+#(CC BY-SA 3.0) https://security.stackexchange.com/a/4745
+#https://rhelblog.redhat.com/2014/04/11/mitigate-tcp-syn-flood-attacks-with-red-hat-enterprise-linux-7-beta/
 #https://people.netfilter.org/hawk/presentations/devconf2014/iptables-ddos-mitigation_JesperBrouer.pdf
 #https://www.digitalocean.com/community/tutorials/how-to-choose-an-effective-firewall-policy-to-secure-your-servers
 
 #
 #Start of sysctl hardening
-#Credit: https://serverfault.com/a/811826
+#Credit (CC BY-SA 3.0): https://serverfault.com/a/811826
 #Credit: https://linux-audit.com/linux-security-guide-for-hardening-ipv6/
 #Credit: https://www.cyberciti.biz/faq/linux-kernel-etcsysctl-conf-security-hardening/
 #
@@ -133,7 +133,7 @@ iptables46 -A INPUT -p tcp -m connlimit --connlimit-above 64 ! -i lo -j LOGREJEC
 
 #
 #Start of accepting ICMP
-#Credit: https://gist.github.com/jirutka/3742890 (MIT)
+#Credit (MIT): https://gist.github.com/jirutka/3742890
 #
 iptables46 -N ICMPFLOOD
 iptables46 -A ICMPFLOOD -m recent --set --name ICMP --rsource
