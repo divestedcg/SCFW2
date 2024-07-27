@@ -1,6 +1,6 @@
 #!/bin/sh
 #Copyright (c) 2017 Divested Computing Group
-#License: GPLv3
+#License: AGPL-3.0-or-later
 
 install -Dm700 iptables46 /usr/bin/iptables46
 install -Dm700 restartscfw /usr/bin/restartscfw

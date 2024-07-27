@@ -1,6 +1,6 @@
 #!/bin/sh
 #Copyright (c) 2017 Divested Computing Group
-#License: GPLv3
+#License: AGPL-3.0-or-later
 
 iptables46 -F
 iptables46 -t mangle -F
